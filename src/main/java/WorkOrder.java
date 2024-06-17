@@ -4,7 +4,7 @@
 public class WorkOrder {
     private final String workOrderID;
     private final String evalQuestTxt;
-    private final String evalQuestValTxt;
+    private String evalQuestValTxt;
     private final String locationName;
     private final String city;
     private final String state;
@@ -121,26 +121,31 @@ public class WorkOrder {
         return gp;
     } //getGp
 
+    //SETTERS
+    public void setEvalQuestValTxt(String evalQuestValTxt) {
+        this.evalQuestValTxt = evalQuestValTxt;
+    }
+
     //ADDITIONAL CLASS METHODS
 
     @Override
     public String toString() {
-        return "WorkOrder{" +
-                "workOrderID='" + workOrderID + '\'' +
-                ", evalQuestTxt='" + evalQuestTxt + '\'' +
-                ", evalQuestValTxt='" + evalQuestValTxt + '\'' +
-                ", locationName='" + locationName + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", signDate='" + signDate + '\'' +
-                ", jobID='" + jobID + '\'' +
-                ", jobCategoryID='" + jobCategoryID + '\'' +
-                ", programType='" + programType + '\'' +
-                ", customerName='" + customerName + '\'' +
-                ", primaryTechnicianID='" + primaryTechnicianID + '\'' +
-                ", districtName='" + districtName + '\'' +
-                ", woStatusID='" + woStatusID + '\'' +
-                ", gp='" + gp + '\'' +
+        return "WorkOrder { \n" +
+                "\t WO Number=             " + workOrderID + '\n' +
+                "\t Question=              " + evalQuestTxt + '\n' +
+                "\t Answer=                " + evalQuestValTxt + '\n' +
+                "\t Store=                 " + locationName + '\n' +
+                "\t City=                  " + city + '\n' +
+                "\t State=                 " + state + '\n' +
+                "\t Sign Date=             " + signDate + '\n' +
+                "\t Job ID=                " + jobID + '\n' +
+                "\t Job Category ID=       " + jobCategoryID + '\n' +
+                "\t Program Type=          " + programType + '\n' +
+                "\t Customer Name=         " + customerName + '\n' +
+                "\t Primary Tech=          " + primaryTechnicianID + '\n' +
+                "\t District Name=         " + districtName + '\n' +
+                "\t WO Status ID=          " + woStatusID + '\n' +
+                "\t GP=                   $" + gp + '\n' +
                 '}';
     } //toString
 
