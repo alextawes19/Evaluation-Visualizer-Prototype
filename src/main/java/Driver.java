@@ -10,11 +10,17 @@ import java.util.HashSet;
  * Main driver for the application.
  */
 public class Driver {
+    /**
+     * Main method.
+     *
+     * @param args CL arguments. Not used.
+     */
     public static void main(String[] args) {
         //START TIMER
         long startTime = System.nanoTime();
 
         ArrayList<WorkOrder> workOrders = new ArrayList<>();
+        ArrayList<WorkOrder> poorWorkOrders = new ArrayList<>();
         HashSet<String> uniqueWoCount = new HashSet<>();
 
         double numQ6 = 0;
@@ -67,6 +73,7 @@ public class Driver {
                     numGood++;
                 } else if (wo.getEvalQuestValTxt().equals("Poor")) {
                     numPoor++;
+                    poorWorkOrders.add(wo);
                 } else if (wo.getEvalQuestValTxt().equals("No Response")) {
                     numBlank++;
                 }
@@ -78,12 +85,22 @@ public class Driver {
                 }
             } //for
 
+            fileWriter.write("========================================\n");
+            fileWriter.write("\n=====POOR PERFORMANCE WOs=====\n");
+
+            for (WorkOrder wo : poorWorkOrders) {
+                String woString = wo.toString();
+                fileWriter.write(woString + "\n\n");
+            }
+
+            //calculate basic statistics
             double percentExcellent = Math.round(((numExcellent/numQ6) * 100.0) * 100.0) / 100.0;
             double percentGood = Math.round(((numGood/numQ6) * 100.0) * 100.0) / 100.0;
             double percentPoor = Math.round(((numPoor/numQ6) * 100.0) * 100.0) / 100.0;
             double percentBlank = Math.round(((numBlank/numQ6) * 100.0) * 100.0) / 100.0;
 
-            fileWriter.write("=====OVERALL STATISTICS=====" + "\n");
+            fileWriter.write("========================================\n");
+            fileWriter.write("\n=====OVERALL STATISTICS=====\n");
             fileWriter.write("# of unique WOs: " + uniqueWoCount.size() + "\n");
             fileWriter.write("Excellent: " + numExcellent + "(" + percentExcellent + "%)" + "\n");
             fileWriter.write("Good: " + numGood + "(" + percentGood + "%)" + "\n");
@@ -97,8 +114,8 @@ public class Driver {
 
         //END TIMER
         long endTime = System.nanoTime();
-        long totalTime = (endTime - startTime)/1000000;
-        long totalTimeS = totalTime/1000;
-        System.out.println("Run time: " + totalTime + "ms, " + totalTimeS + "s");
+        long totalTimeMs = (endTime - startTime)/1000000;
+        long totalTimeS = totalTimeMs/1000;
+        System.out.println("Run time: " + totalTimeMs + "ms, " + totalTimeS + "s");
     } //main
 } //Driver
