@@ -31,7 +31,7 @@ public class Driver {
         try {
             File writeFile = new File("src/main/resources/Additional.txt");
             FileWriter fileWriter = new FileWriter(writeFile);
-            fileWriter.write("=====WORK ORDERS WITH ADDITIONAL COMMENTS===== \n\n");
+            fileWriter.write("=====WORK ORDERS WITH ADDITIONAL COMMENTS=====\n\n");
 
             File csvFile = new File("src/main/resources/May.csv");
             FileReader fileReader = new FileReader(csvFile);
@@ -102,10 +102,10 @@ public class Driver {
             fileWriter.write("========================================\n");
             fileWriter.write("\n=====OVERALL STATISTICS=====\n");
             fileWriter.write("# of unique WOs: " + uniqueWoCount.size() + "\n");
-            fileWriter.write("Excellent: " + numExcellent + "(" + percentExcellent + "%)" + "\n");
-            fileWriter.write("Good: " + numGood + "(" + percentGood + "%)" + "\n");
-            fileWriter.write("Poor: " + numPoor + "(" + percentPoor + "%)" + "\n");
-            fileWriter.write("Blank: " + numBlank + "(" + percentBlank + "%)");
+            fileWriter.write("Excellent: " + numExcellent + "(" + percentExcellent + "%)\n");
+            fileWriter.write("Good: " + numGood + "(" + percentGood + "%)\n");
+            fileWriter.write("Poor: " + numPoor + "(" + percentPoor + "%)\n");
+            fileWriter.write("Blank/No Response: " + numBlank + "(" + percentBlank + "%)");
 
             fileWriter.close();
         } catch (Exception e) {
