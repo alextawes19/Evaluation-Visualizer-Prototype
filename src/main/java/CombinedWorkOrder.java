@@ -129,4 +129,26 @@ public class CombinedWorkOrder {
     public void setAnswers(ArrayList<String> answers) {
         this.answers = answers;
     }
+
+    //ADDITIONAL CLASS METHODS
+    @Override
+    public String toString() {
+        return "WorkOrder { \n" +
+                "\t WO Number=             " + workOrderID + '\n' +
+                "\t Questions=              " + questions.toString() + '\n' +
+                "\t Answers=                " + answers.toString() + '\n' +
+                "\t Store=                 " + locationName + '\n' +
+                "\t City=                  " + city + '\n' +
+                "\t State=                 " + state + '\n' +
+                "\t Sign Date=             " + signDate + '\n' +
+                "\t Job ID=                " + jobID + '\n' +
+                "\t Job Category ID=       " + jobCategoryID + '\n' +
+                "\t Program Type=          " + programType + '\n' +
+                "\t Customer Name=         " + customerName + '\n' +
+                "\t Primary Tech=          " + primaryTechnicianID + '\n' +
+                "\t District Name=         " + districtName + '\n' +
+                "\t WO Status ID=          " + woStatusID + '\n' +
+                "\t GP=                   $" + gp + '\n' +
+                '}';
+    } //toString
 } //CombinedWorkOrder

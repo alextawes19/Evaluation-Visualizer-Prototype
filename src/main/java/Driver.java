@@ -85,6 +85,7 @@ public class Driver {
                 }
             } //for
 
+
             fileWriter.write("========================================\n");
             fileWriter.write("\n=====POOR PERFORMANCE WOs=====\n");
 
@@ -118,4 +119,61 @@ public class Driver {
         long totalTimeS = totalTimeMs/1000;
         System.out.println("Run time: " + totalTimeMs + "ms, " + totalTimeS + "s");
     } //main
+
+    public static ArrayList<CombinedWorkOrder> constructCombinedWorkOrders(ArrayList<WorkOrder> workOrders, ArrayList<WorkOrder> uniqueWorkOrders) {
+        ArrayList<CombinedWorkOrder> combinedList = new ArrayList<>();
+        ArrayList<String> questions = new ArrayList<>();
+        questions.add(0, "Did Contractors Employees Cooperate with You?");
+        questions.add(1, "Did Contractors Clean Up All Work Areas?");
+        questions.add(2, "Was Contractors Quality of Work Satisfactory?");
+        questions.add(3, "If NO - Please Specify");
+        questions.add(4, "Overall Performance Was:");
+        questions.add(5, "Additional Comments on Work Provided:");
+
+        ArrayList<String> answers;
+        ArrayList<String> diffAnswers;
+        ArrayList<WorkOrder> sameWoDiffDate = new ArrayList<>();
+        boolean isDiffDate = false;
+        String diffSignDate = "";
+
+        for (WorkOrder woU: uniqueWorkOrders) {
+             answers = new ArrayList<>();
+             diffAnswers = new ArrayList<>();
+            for (WorkOrder wo : workOrders) {
+                //composite key - ensures same evaluation form
+                //elseif - same WO different evaluation form
+                if (wo.getWorkOrderID().equals(woU.getWorkOrderID()) && wo.getSignDate().equals(woU.getSignDate())) {
+                    for (int i = 0; i < questions.size(); i++) {
+                        if (wo.getEvalQuestTxt().equals(questions.get(i))) {
+                            answers.add(i, wo.getEvalQuestValTxt());
+                        }
+                    }
+                } else if (wo.getWorkOrderID().equals(woU.getWorkOrderID()) && !wo.getSignDate().equals(woU.getSignDate())) {
+                    isDiffDate = true;
+                    diffSignDate = wo.getSignDate();
+                    for (int i = 0; i < questions.size(); i++) {
+                        if (wo.getEvalQuestTxt().equals(questions.get(i))) {
+                            diffAnswers.add(i, wo.getEvalQuestValTxt());
+                        }
+                    }
+                }
+            } //child for
+
+            CombinedWorkOrder combinedWorkOrder = new CombinedWorkOrder(woU.getWorkOrderID(), questions, answers, woU.getLocationName(),
+                    woU.getCity(), woU.getState(), woU.getSignDate(), woU.getJobID(),
+                    woU.getJobCategoryID(), woU.getProgramType(), woU.getCustomerName(), woU.getPrimaryTechnicianID(),
+                    woU.getDistrictName(), woU.getWoStatusID(), woU.getGp());
+            combinedList.add(combinedWorkOrder);
+
+            if (isDiffDate) {
+                CombinedWorkOrder combinedWorkOrder1 = new CombinedWorkOrder(woU.getWorkOrderID(), questions, diffAnswers, woU.getLocationName(),
+                        woU.getCity(), woU.getState(), diffSignDate, woU.getJobID(),
+                        woU.getJobCategoryID(), woU.getProgramType(), woU.getCustomerName(), woU.getPrimaryTechnicianID(),
+                        woU.getDistrictName(), woU.getWoStatusID(), woU.getGp());
+                combinedList.add(combinedWorkOrder1);
+            }
+        } //parent for
+
+        return combinedList;
+    } //constructCombinedWorkOrders
 } //Driver
