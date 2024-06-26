@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
- * Main driver for the application.
+ * Initial driver for the application.
  */
 public class Driver {
     /**
