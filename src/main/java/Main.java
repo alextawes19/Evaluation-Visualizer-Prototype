@@ -1,4 +1,7 @@
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 public class Main extends JFrame {
     private JButton buttonUpload;
@@ -16,6 +19,12 @@ public class Main extends JFrame {
         topPanel.setSize(100, 300);
         //buttonUpload
         buttonUpload.setSize(50,50);
+        buttonUpload.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                uploadFile();
+            }
+        });
         //comboFilter
         comboFilter.addItem("Filter by Ranking (Excellent, Good, Poor)");
         comboFilter.addItem("Filter by Tech Assigned");
@@ -26,6 +35,10 @@ public class Main extends JFrame {
         comboTechs.addItem("Tech Names");
         //buttonFilter
         buttonFilter.setEnabled(false);
+        //textArea
+        textArea1.setEnabled(false);
+        //buttonExport
+        buttonExport.setEnabled(false);
     } //Main
 
     public static void main(String[] args) {
@@ -38,4 +51,13 @@ public class Main extends JFrame {
 
         m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     } //main
+
+    //EXTRA METHODS
+    public void uploadFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(this);
+        if (returnValue == fileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+        }
+    } //uploadFile
 } //Main
