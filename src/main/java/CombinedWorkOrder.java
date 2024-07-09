@@ -135,8 +135,8 @@ public class CombinedWorkOrder {
     public String toString() {
         return "WorkOrder { \n" +
                 "\t WO Number=             " + workOrderID + '\n' +
-                "\t Questions=              " + questions.toString() + '\n' +
-                "\t Answers=                " + answers.toString() + '\n' +
+                "\t Questions=             " + questions.toString() + '\n' +
+                "\t Answers=               " + answers.toString() + '\n' +
                 "\t Store=                 " + locationName + '\n' +
                 "\t City=                  " + city + '\n' +
                 "\t State=                 " + state + '\n' +

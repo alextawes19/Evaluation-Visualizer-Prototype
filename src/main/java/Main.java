@@ -46,6 +46,7 @@ public class Main extends JFrame {
         buttonFilter.setEnabled(false);
         //textArea
         textArea1.setEnabled(false);
+        textArea1.setEditable(false);
         //buttonExport
         buttonExport.setEnabled(false);
     } //Main
@@ -106,7 +107,32 @@ public class Main extends JFrame {
                         "Column 10: ProgramType\nColumn 11: CustomerName\nColumn 12: PrimaryTechnicianID\nColumn 13: DistrictName\n" +
                         "Column 14: WOStatusID\n Column 15: Revenue\nColumn 16: Expense\n Column 17: GP");
             } else {
-                System.out.println("Correct Format");
+
+                while ((nextRecord = csvReader.readNext()) != null) {
+                    WorkOrder workOrder = new WorkOrder (
+                            nextRecord[0], nextRecord[1], nextRecord[2], nextRecord[3],
+                            nextRecord[4],nextRecord[5], nextRecord[6], nextRecord[7],
+                            nextRecord[8],nextRecord[9], nextRecord[10], nextRecord[11],
+                            nextRecord[12],nextRecord[13], nextRecord[16]
+                    );
+
+                    if (workOrder.getEvalQuestValTxt().isEmpty()) {
+                        workOrder.setEvalQuestValTxt("No Response");
+                    }
+
+                    workOrders.add(workOrder);
+                }
+
+                for (WorkOrder wo : workOrders) {
+                    rawWOs.add(wo.getWorkOrderID() + "|" + wo.getSignDate());
+                }
+
+                combinedWorkOrders = Driver2.constructCombinedWorkOrders(workOrders);
+
+                for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                    textArea1.setText(textArea1.getText() + cWO.toString() + "\n");
+                }
+                textArea1.setEnabled(true);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Unexpected error occurred while processing data: " + e);

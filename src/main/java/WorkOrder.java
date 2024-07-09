@@ -225,7 +225,7 @@ public class WorkOrder {
                 "\t District Name=         " + districtName + '\n' +
                 "\t WO Status ID=          " + woStatusID + '\n' +
                 "\t GP=                   $" + gp + '\n' +
-                '}';
+                "}\n";
     } //toString
 
 } //WorkOrder
