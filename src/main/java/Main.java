@@ -8,6 +8,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -71,6 +72,30 @@ public class Main extends JFrame {
         comboTechs.addItem("Tech Names | WO Types");
         //buttonFilter
         buttonFilter.setEnabled(false);
+
+        buttonFilter.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea1.setText("");
+                if (comboFilter.getSelectedItem().equals("Filter by All Rankings")) {
+                    new FilterByAllRankings().execute();
+                } else if (comboFilter.getSelectedItem().equals("Filter by Excellent Rankings")) {
+                    new FilterByExcellentRankings().execute();
+                } else if (comboFilter.getSelectedItem().equals("Filter by Good Rankings")) {
+                    new FilterByGoodRankings().execute();
+                } else if (comboFilter.getSelectedItem().equals("Filter by Poor Rankings")) {
+                    new FilterByPoorRankings().execute();
+                } else if (comboFilter.getSelectedItem().equals("Filter by WOs with Additional Comments")) {
+                    new FilterByAdditionalComments().execute();
+                } else if (comboFilter.getSelectedItem().equals("Filter by Tech Assigned")) {
+                    new FilterByTechAssigned((String)comboTechs.getSelectedItem()).execute();
+                } else if (comboFilter.getSelectedItem().equals("Filter by WO Type")) {
+                    new FilterByWOType((String)comboTechs.getSelectedItem()).execute();
+                } else {
+                    JOptionPane.showMessageDialog(Main.this, "Error processing selections");
+                }
+            }
+        });
         //textArea
         textArea1.setEnabled(false);
         textArea1.setEditable(false);
@@ -297,5 +322,256 @@ public class Main extends JFrame {
             }
         }
     }
+
+    //=============FILTERING METHODS AND THREADS=============
+    private class FilterByAllRankings extends SwingWorker<Void, CombinedWorkOrder> {
+        private ArrayList<CombinedWorkOrder> allRankings = new ArrayList<>();
+
+        public FilterByAllRankings() {
+
+        } //FilterByAllRankings
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                if (!cWO.getAnswers().get(0).equals("No Response")) {
+                    allRankings.add(cWO);
+                }
+            }
+
+            for (CombinedWorkOrder cWO : allRankings) {
+                publish(cWO);
+            }
+            return null;
+        } //doInBackground
+
+        @Override
+        protected void process(List<CombinedWorkOrder> chunks) {
+            for (CombinedWorkOrder cWO: chunks) {
+                textArea1.append(cWO.toString() + "\n");
+            }
+            textArea1.setEnabled(true);
+        } //process
+
+        @Override
+        protected void done() {
+            super.done();
+        } //done
+    } //FilterByAllRankings
+
+    private class FilterByExcellentRankings extends SwingWorker<Void, CombinedWorkOrder> {
+        private ArrayList<CombinedWorkOrder> excellentRatings = new ArrayList<>();
+        public FilterByExcellentRankings() {
+
+        } //FilterByeExcellentRankings
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                if (cWO.getQuestions().contains("Overall Performance Was:")) {
+                    int index = cWO.getQuestions().indexOf("Overall Performance Was:");
+
+                    if (cWO.getAnswers().get(index).equals("Excellent")) {
+                        excellentRatings.add(cWO);
+                    }
+                }
+            }
+
+            for (CombinedWorkOrder cWO : excellentRatings) {
+                publish(cWO);
+            }
+            return null;
+        } //doInBackground
+
+        @Override
+        protected void process(List<CombinedWorkOrder> chunks) {
+            for (CombinedWorkOrder cWO: chunks) {
+                textArea1.append(cWO.toString() + "\n");
+            }
+            textArea1.setEnabled(true);
+        } //process
+
+        @Override
+        protected void done() {
+            super.done();
+        } //done
+    } //FilterByExcellentRankings
+
+    private class FilterByGoodRankings extends SwingWorker<Void, CombinedWorkOrder> {
+        private ArrayList<CombinedWorkOrder> goodRankings = new ArrayList<>();
+        public FilterByGoodRankings() {
+
+        } //FilterByGoodRankings
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                if (cWO.getQuestions().contains("Overall Performance Was:")) {
+                    int index = cWO.getQuestions().indexOf("Overall Performance Was:");
+
+                    if (cWO.getAnswers().get(index).equals("Good")) {
+                        goodRankings.add(cWO);
+                    }
+                }
+            }
+
+            for (CombinedWorkOrder cWO : goodRankings) {
+                publish(cWO);
+            }
+            return null;
+        } //doInBackground
+
+        @Override
+        protected void process(List<CombinedWorkOrder> chunks) {
+            for (CombinedWorkOrder cWO: chunks) {
+                textArea1.append(cWO.toString() + "\n");
+            }
+            textArea1.setEnabled(true);
+        } //process
+
+        @Override
+        protected void done() {
+            super.done();
+        } //done
+    } //FilterByGoodRankings
+
+    private class FilterByPoorRankings extends SwingWorker<Void, CombinedWorkOrder> {
+        private ArrayList<CombinedWorkOrder> poorRankings = new ArrayList<>();
+        public FilterByPoorRankings() {
+
+        } //FilterByPoorRankings
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                if (cWO.getQuestions().contains("Overall Performance Was:")) {
+                    int index = cWO.getQuestions().indexOf("Overall Performance Was:");
+
+                    if (cWO.getAnswers().get(index).equals("Poor")) {
+                        poorRankings.add(cWO);
+                    }
+                }
+            }
+
+            for (CombinedWorkOrder cWO : poorRankings) {
+                publish(cWO);
+            }
+            return null;
+        } //doInBackground
+
+        @Override
+        protected void process(List<CombinedWorkOrder> chunks) {
+            for (CombinedWorkOrder cWO: chunks) {
+                textArea1.append(cWO.toString() + "\n");
+            }
+            textArea1.setEnabled(true);
+        } //process
+
+        @Override
+        protected void done() {
+            super.done();
+        } //done
+    } //FilterByPoorRankings
+
+    private class FilterByAdditionalComments extends SwingWorker<Void, CombinedWorkOrder> {
+        private ArrayList<CombinedWorkOrder> additionalComments = new ArrayList<>();
+        public FilterByAdditionalComments() {
+
+        } //FilterByAdditionalComments
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                if (cWO.getQuestions().contains("Additional Comments on Work Provided:")) {
+                    int index = cWO.getQuestions().indexOf("Additional Comments on Work Provided:");
+
+                    if (!cWO.getAnswers().get(index).equals("No Response") && !cWO.getAnswers().get(index).equals("Na")) {
+                        additionalComments.add(cWO);
+                    }
+                }
+            }
+
+            for (CombinedWorkOrder cWO : additionalComments) {
+                publish(cWO);
+            }
+            return null;
+        } //doInBackground
+
+        @Override
+        protected void process(List<CombinedWorkOrder> chunks) {
+            for (CombinedWorkOrder cWO: chunks) {
+                textArea1.append(cWO.toString() + "\n");
+            }
+            textArea1.setEnabled(true);
+        } //process
+
+        @Override
+        protected void done() {
+            super.done();
+        } //done
+    } //FilterByAdditionalComments
+
+    private class FilterByTechAssigned extends SwingWorker<Void, CombinedWorkOrder> {
+        private String tech;
+        private ArrayList<CombinedWorkOrder> specificTech = new ArrayList<>();
+        public FilterByTechAssigned(String tech) {
+            this.tech = tech;
+        } //FilterByTechAssigned
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                if (cWO.getPrimaryTechnicianID().equals(tech)) {
+                    specificTech.add(cWO);
+                }
+            }
+
+            for (CombinedWorkOrder cWO : specificTech) {
+                publish(cWO);
+            }
+            return null;
+        } //doInBackground
+
+        @Override
+        protected void process(List<CombinedWorkOrder> chunks) {
+            for (CombinedWorkOrder cWO: chunks) {
+                textArea1.append(cWO.toString() + "\n");
+            }
+            textArea1.setEnabled(true);
+        } //process
+
+        @Override
+        protected void done() {
+            super.done();
+        } //done
+    } //FilterByTechAssigned
+
+    private class FilterByWOType extends SwingWorker<Void, CombinedWorkOrder> {
+        private String woType;
+        private ArrayList<CombinedWorkOrder> specificType = new ArrayList<>();
+        public FilterByWOType(String woType) {
+            this.woType = woType;
+        } //FilterByWOType
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                if (cWO.getProgramType().equals(woType)) {
+                    specificType.add(cWO);
+                }
+            }
+
+            for (CombinedWorkOrder cWO : specificType) {
+                publish(cWO);
+            }
+            return null;
+        } //doInBackground
+
+        @Override
+        protected void process(List<CombinedWorkOrder> chunks) {
+            for (CombinedWorkOrder cWO: chunks) {
+                textArea1.append(cWO.toString() + "\n");
+            }
+            textArea1.setEnabled(true);
+        } //process
+
+        @Override
+        protected void done() {
+            super.done();
+        } //done
+    } //FilterByWOType
 
 } //Main
