@@ -37,6 +37,17 @@ public class Main extends JFrame {
         //comboFilter
         comboFilter.addItem("Filter by Ranking (Excellent, Good, Poor)");
         comboFilter.addItem("Filter by Tech Assigned");
+        comboFilter.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (comboFilter.getSelectedItem().equals("Filter by Tech Assigned")) {
+                    populateTechNames();
+                    comboTechs.setEnabled(true);
+                } else {
+                    comboTechs.setEnabled(false);
+                }
+            }
+        });
         //comboFilter
         comboFilter.setEnabled(false);
         //comboTechs
@@ -55,9 +66,9 @@ public class Main extends JFrame {
         Main m = new Main();
         m.setTitle("Eval Form Analysis");
         m.setContentPane(m.panelMain);
-        m.setSize(900, 900);
+        m.setSize(600, 600);
         m.setVisible(true);
-        m.setResizable(false);
+        m.setResizable(true);
 
         m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     } //main
@@ -133,11 +144,37 @@ public class Main extends JFrame {
                     textArea1.setText(textArea1.getText() + cWO.toString() + "\n");
                 }
                 textArea1.setEnabled(true);
+
+                comboFilter.setEnabled(true);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Unexpected error occurred while processing data: " + e);
         }
     } //processCSV
 
+    /**
+     * Populates comboTechs with all unique technician names.
+     */
+    public void populateTechNames() {
+        //if somehow data has not been populated
+        if (combinedWorkOrders == null) {
+            JOptionPane.showMessageDialog(this, "Critical Error: data processing");
+            return;
+        }
+
+        //obtain unique techIDs for filtering
+        HashSet<String> techNames = new HashSet<>();
+
+        for (CombinedWorkOrder wo : combinedWorkOrders) {
+            techNames.add(wo.getPrimaryTechnicianID());
+        }
+
+        comboTechs.removeAllItems();
+
+        //populate combobox with tech names
+        for (String techName : techNames) {
+            comboTechs.addItem(techName);
+        }
+    } //filterByTechs
 
 } //Main
