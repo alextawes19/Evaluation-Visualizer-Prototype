@@ -133,7 +133,7 @@ public class CombinedWorkOrder {
     //ADDITIONAL CLASS METHODS
     @Override
     public String toString() {
-        return "WorkOrder { \n" +
+        return "Work Order { \n" +
                 "\t WO Number=             " + workOrderID + '\n' +
                 "\t Questions=             " + questions.toString() + '\n' +
                 "\t Answers=               " + answers.toString() + '\n' +
