@@ -134,21 +134,21 @@ public class CombinedWorkOrder {
     @Override
     public String toString() {
         return "Work Order { \n" +
-                "\t WO Number=             " + workOrderID + '\n' +
-                "\t Questions=             " + questions.toString() + '\n' +
-                "\t Answers=               " + answers.toString() + '\n' +
-                "\t Store=                 " + locationName + '\n' +
-                "\t City=                  " + city + '\n' +
-                "\t State=                 " + state + '\n' +
-                "\t Sign Date=             " + signDate + '\n' +
-                "\t Job ID=                " + jobID + '\n' +
-                "\t Job Category ID=       " + jobCategoryID + '\n' +
-                "\t Program Type=          " + programType + '\n' +
-                "\t Customer Name=         " + customerName + '\n' +
-                "\t Primary Tech=          " + primaryTechnicianID + '\n' +
-                "\t District Name=         " + districtName + '\n' +
-                "\t WO Status ID=          " + woStatusID + '\n' +
-                "\t GP=                   $" + gp + '\n' +
+                "\t WO Number=\t" + workOrderID + '\n' +
+                "\t Questions=\t" + questions.toString() + '\n' +
+                "\t Answers=\t" + answers.toString() + '\n' +
+                "\t Store=\t" + locationName + '\n' +
+                "\t City=\t" + city + '\n' +
+                "\t State=\t" + state + '\n' +
+                "\t Sign Date=\t" + signDate + '\n' +
+                "\t Job ID=\t" + jobID + '\n' +
+                "\t Job Category ID=      " + jobCategoryID + '\n' +
+                "\t Program Type=\t         " + programType + '\n' +
+                "\t Customer Name=    " + customerName + '\n' +
+                "\t Primary Tech=\t   " + primaryTechnicianID + '\n' +
+                "\t District Name=\t   " + districtName + '\n' +
+                "\t WO Status ID=\t   " + woStatusID + '\n' +
+                "\t GP=\t   $" + gp + '\n' +
                 '}';
     } //toString
 } //CombinedWorkOrder

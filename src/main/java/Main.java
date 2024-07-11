@@ -1,3 +1,11 @@
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
 import com.opencsv.CSVReader;
 
 import javax.swing.*;
@@ -7,8 +15,9 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.lang.reflect.Array;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -99,8 +108,20 @@ public class Main extends JFrame {
         //textArea
         textArea1.setEnabled(false);
         textArea1.setEditable(false);
+
         //buttonExport
         buttonExport.setEnabled(false);
+
+        buttonExport.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    exportToPDF();
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     } //Main
 
     public static void main(String[] args) {
@@ -252,6 +273,7 @@ public class Main extends JFrame {
                 textArea1.append(cWO.toString() + "\n");
             }
             textArea1.setEnabled(true);
+            buttonExport.setEnabled(true);
         }
 
         @Override
@@ -323,7 +345,59 @@ public class Main extends JFrame {
         }
     }
 
+    /**
+     * Exports whatever is in textArea1 to PDF
+     *
+     * @throws FileNotFoundException if file not found
+     */
+    public void exportToPDF() throws FileNotFoundException {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save PDF");
+        int userSelection = fileChooser.showSaveDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            if (!fileToSave.getName().endsWith(".pdf")) {
+                fileToSave = new File(fileToSave.getAbsolutePath() + ".pdf");
+            }
+
+            PdfWriter writer = new PdfWriter(fileToSave);
+            PdfDocument pdfDoc = new PdfDocument(writer);
+            Document document = new Document(pdfDoc);
+
+            String content = textArea1.getText();
+
+            try {
+                PdfFont font = PdfFontFactory.createFont();
+                Text textElement = new Text(content)
+                        .setFont(font)
+                        .setFontSize(10) // Set the font size to 12
+                        .setFontColor(ColorConstants.BLACK); // Set font color to black
+                Paragraph paragraph = new Paragraph(textElement);
+
+                document.add(paragraph);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            document.close();
+
+            JOptionPane.showMessageDialog(this, "PDF exported successfully!");
+        }
+    } //exportToPDF
+
+
+
+
+
+
     //=============FILTERING METHODS AND THREADS=============
+    //==============================================================================================================
+    //==============================================================================================================
+
+    /**
+     * Filters WOs by all rankings
+     */
     private class FilterByAllRankings extends SwingWorker<Void, CombinedWorkOrder> {
         private ArrayList<CombinedWorkOrder> allRankings = new ArrayList<>();
 
@@ -358,6 +432,9 @@ public class Main extends JFrame {
         } //done
     } //FilterByAllRankings
 
+    /**
+     * Filters WOs by excellent ratings
+     */
     private class FilterByExcellentRankings extends SwingWorker<Void, CombinedWorkOrder> {
         private ArrayList<CombinedWorkOrder> excellentRatings = new ArrayList<>();
         public FilterByExcellentRankings() {
@@ -395,6 +472,9 @@ public class Main extends JFrame {
         } //done
     } //FilterByExcellentRankings
 
+    /**
+     * Filters WOs by good ratings
+     */
     private class FilterByGoodRankings extends SwingWorker<Void, CombinedWorkOrder> {
         private ArrayList<CombinedWorkOrder> goodRankings = new ArrayList<>();
         public FilterByGoodRankings() {
@@ -432,6 +512,9 @@ public class Main extends JFrame {
         } //done
     } //FilterByGoodRankings
 
+    /**
+     * Filters WOs by poor ratings
+     */
     private class FilterByPoorRankings extends SwingWorker<Void, CombinedWorkOrder> {
         private ArrayList<CombinedWorkOrder> poorRankings = new ArrayList<>();
         public FilterByPoorRankings() {
@@ -460,6 +543,7 @@ public class Main extends JFrame {
             for (CombinedWorkOrder cWO: chunks) {
                 textArea1.append(cWO.toString() + "\n");
             }
+
             textArea1.setEnabled(true);
         } //process
 
@@ -469,6 +553,9 @@ public class Main extends JFrame {
         } //done
     } //FilterByPoorRankings
 
+    /**
+     * Filters WOs by additional comments
+     */
     private class FilterByAdditionalComments extends SwingWorker<Void, CombinedWorkOrder> {
         private ArrayList<CombinedWorkOrder> additionalComments = new ArrayList<>();
         public FilterByAdditionalComments() {
@@ -506,6 +593,9 @@ public class Main extends JFrame {
         } //done
     } //FilterByAdditionalComments
 
+    /**
+     * Filters WOs by the tech assigned
+     */
     private class FilterByTechAssigned extends SwingWorker<Void, CombinedWorkOrder> {
         private String tech;
         private ArrayList<CombinedWorkOrder> specificTech = new ArrayList<>();
@@ -540,6 +630,9 @@ public class Main extends JFrame {
         } //done
     } //FilterByTechAssigned
 
+    /**
+     * Filters WOs by WO type
+     */
     private class FilterByWOType extends SwingWorker<Void, CombinedWorkOrder> {
         private String woType;
         private ArrayList<CombinedWorkOrder> specificType = new ArrayList<>();
