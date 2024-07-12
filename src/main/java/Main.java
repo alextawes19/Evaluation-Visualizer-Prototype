@@ -54,7 +54,9 @@ public class Main extends JFrame {
         comboFilter.addItem("Filter by Excellent Rankings");
         comboFilter.addItem("Filter by Good Rankings");
         comboFilter.addItem("Filter by Poor Rankings");
-        comboFilter.addItem("Filter by WOs with Additional Comments");
+        comboFilter.addItem("Filter by All WOs with Additional Comments");
+        comboFilter.addItem("Filter by Excellent Rated WOs with Additional Comments");
+        comboFilter.addItem("Filter by Poor Rated WOs with Additional Comments");
         comboFilter.addItem("Filter by Tech Assigned");
         comboFilter.addItem("Filter by WO Type");
         comboFilter.addActionListener(new ActionListener() {
@@ -100,6 +102,10 @@ public class Main extends JFrame {
                     new FilterByTechAssigned((String)comboTechs.getSelectedItem()).execute();
                 } else if (comboFilter.getSelectedItem().equals("Filter by WO Type")) {
                     new FilterByWOType((String)comboTechs.getSelectedItem()).execute();
+                } else if (comboFilter.getSelectedItem().equals("Filter by Excellent Rated WOs with Additional Comments")) {
+                    new FilterByExcellentWithAdditional().execute();
+                } else if (comboFilter.getSelectedItem().equals("Filter by Poor Rated WOs with Additional Comments")) {
+                    new FilterByPoorWithAdditional().execute();
                 } else {
                     JOptionPane.showMessageDialog(Main.this, "Error processing selections");
                 }
@@ -369,10 +375,12 @@ public class Main extends JFrame {
 
             try {
                 PdfFont font = PdfFontFactory.createFont();
+
                 Text textElement = new Text(content)
                         .setFont(font)
-                        .setFontSize(10) // Set the font size to 12
+                        .setFontSize(8) // Set the font size to 12
                         .setFontColor(ColorConstants.BLACK); // Set font color to black
+
                 Paragraph paragraph = new Paragraph(textElement);
 
                 document.add(paragraph);
@@ -400,6 +408,15 @@ public class Main extends JFrame {
      */
     private class FilterByAllRankings extends SwingWorker<Void, CombinedWorkOrder> {
         private ArrayList<CombinedWorkOrder> allRankings = new ArrayList<>();
+        int numExcellent = 0;
+        int numGood = 0;
+        int numPoor = 0;
+        int numBlank = 0;
+
+        double percentExcellent;
+        double percentGood;
+        double percentPoor;
+        double percentBlank;
 
         public FilterByAllRankings() {
 
@@ -407,10 +424,28 @@ public class Main extends JFrame {
         @Override
         protected Void doInBackground() throws Exception {
             for (CombinedWorkOrder cWO : combinedWorkOrders) {
-                if (!cWO.getAnswers().get(0).equals("No Response")) {
-                    allRankings.add(cWO);
+                allRankings.add(cWO);
+
+                if (cWO.getQuestions().contains("Overall Performance Was:")) {
+                    int index  = cWO.getQuestions().indexOf("Overall Performance Was:");
+
+                    if (cWO.getAnswers().get(index).equals("Excellent")) {
+                        numExcellent++;
+                    } else if (cWO.getAnswers().get(index).equals("Good")) {
+                        numGood++;
+                    } else if (cWO.getAnswers().get(index).equals("Poor")) {
+                        numPoor++;
+                    } else if (cWO.getAnswers().get(index).equals("No Response")) {
+                        numBlank++;
+                    }
                 }
             }
+
+            //calculate basic statistics
+            percentExcellent = Math.round((((double) numExcellent / allRankings.size()) * 100.0) * 100.0) / 100.0;
+            percentGood = Math.round((((double) numGood /allRankings.size()) * 100.0) * 100.0) / 100.0;
+            percentPoor = Math.round((((double) numPoor /allRankings.size()) * 100.0) * 100.0) / 100.0;
+            percentBlank = Math.round((((double) numBlank /allRankings.size()) * 100.0) * 100.0) / 100.0;
 
             for (CombinedWorkOrder cWO : allRankings) {
                 publish(cWO);
@@ -424,6 +459,12 @@ public class Main extends JFrame {
                 textArea1.append(cWO.toString() + "\n");
             }
             textArea1.setEnabled(true);
+            textArea1.append("\n\n======================STATISTICS SUMMARY======================\n" +
+                    "# of WOs: " + allRankings.size() + "\n" +
+                    "Excellent: " + numExcellent + "(" + percentExcellent + "%)\n" +
+                    "Good: " + numGood + "(" + percentGood + "%)\n" +
+                    "Poor: " + numPoor + "(" + percentPoor + "%)\n" +
+                    "Blank/No Response: " + numBlank + "(" + percentBlank + "%)");
         } //process
 
         @Override
@@ -666,5 +707,94 @@ public class Main extends JFrame {
             super.done();
         } //done
     } //FilterByWOType
+
+    /**
+     * Filters WOs by excellent ratings that have additional comments
+     */
+    private class FilterByExcellentWithAdditional extends SwingWorker<Void, CombinedWorkOrder> {
+        private ArrayList<CombinedWorkOrder> excellentAdditionalWOs = new ArrayList<>();
+        public FilterByExcellentWithAdditional() {
+
+        } //FilterByeExcellentRankings
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                if (cWO.getQuestions().contains("Overall Performance Was:") && cWO.getQuestions().contains("Additional Comments on Work Provided:")) {
+                    int index = cWO.getQuestions().indexOf("Overall Performance Was:");
+                    int index1 = cWO.getQuestions().indexOf("Additional Comments on Work Provided:");
+
+                    if (cWO.getAnswers().get(index).equals("Excellent") &&
+                            !cWO.getAnswers().get(index1).equals("No Response") &&
+                            !cWO.getAnswers().get(index1).equals("Na")) {
+                        excellentAdditionalWOs.add(cWO);
+                    }
+                }
+            }
+
+            for (CombinedWorkOrder cWO : excellentAdditionalWOs) {
+                publish(cWO);
+            }
+            return null;
+        } //doInBackground
+
+        @Override
+        protected void process(List<CombinedWorkOrder> chunks) {
+            textArea1.append("========EXCELLENT RATED WORK ORDERS WITH ADDITIONAL COMMENTS========\n\n\n");
+            for (CombinedWorkOrder cWO: chunks) {
+                textArea1.append(cWO.toString() + "\n");
+            }
+            textArea1.setEnabled(true);
+            textArea1.append("\n\n=====================STATISTICS=====================\n" +
+                    "Number of WOs: " + excellentAdditionalWOs.size());
+        } //process
+
+        @Override
+        protected void done() {
+            super.done();
+        } //done
+    } //FilterByExcellentWithAdditional
+
+    /**
+     * Filters WOs by poor ratings that have additional comments
+     */
+    private class FilterByPoorWithAdditional extends SwingWorker<Void, CombinedWorkOrder> {
+        private ArrayList<CombinedWorkOrder> poorAdditionalWOs = new ArrayList<>();
+        public FilterByPoorWithAdditional() {
+
+        } //FilterByeExcellentRankings
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                if (cWO.getQuestions().contains("Overall Performance Was:") && cWO.getQuestions().contains("Additional Comments on Work Provided:")) {
+                    int index = cWO.getQuestions().indexOf("Overall Performance Was:");
+                    int index1 = cWO.getQuestions().indexOf("Additional Comments on Work Provided:");
+
+                    if (cWO.getAnswers().get(index).equals("Poor") &&
+                            !cWO.getAnswers().get(index1).equals("No Response") &&
+                            !cWO.getAnswers().get(index1).equals("Na")) {
+                        poorAdditionalWOs.add(cWO);
+                    }
+                }
+            }
+
+            for (CombinedWorkOrder cWO : poorAdditionalWOs) {
+                publish(cWO);
+            }
+            return null;
+        } //doInBackground
+
+        @Override
+        protected void process(List<CombinedWorkOrder> chunks) {
+            for (CombinedWorkOrder cWO: chunks) {
+                textArea1.append(cWO.toString() + "\n");
+            }
+            textArea1.setEnabled(true);
+        } //process
+
+        @Override
+        protected void done() {
+            super.done();
+        } //done
+    } //FilterByPoorWithAdditional
 
 } //Main
