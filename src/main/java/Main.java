@@ -394,12 +394,17 @@ public class Main extends JFrame {
         }
     } //exportToPDF
 
+    public double calculatePercentage(int num, int listSize) {
+        return Math.round((((double) num / listSize) * 100.0) * 100.0) / 100.0;
+    } //calculatePercentage
 
 
 
-
-
-    //=============FILTERING METHODS AND THREADS=============
+    //==============================================================================================================
+    //==============================================================================================================
+    //==============================================================================================================
+    //================================FILTERING METHODS AND THREADS=================================================
+    //==============================================================================================================
     //==============================================================================================================
     //==============================================================================================================
 
@@ -505,6 +510,8 @@ public class Main extends JFrame {
                 textArea1.append(cWO.toString() + "\n");
             }
             textArea1.setEnabled(true);
+            textArea1.append("\n\n======================STATISTICS SUMMARY======================\n" +
+                    "Count of Excellent WOs: " + excellentRatings.size());
         } //process
 
         @Override
@@ -545,6 +552,8 @@ public class Main extends JFrame {
                 textArea1.append(cWO.toString() + "\n");
             }
             textArea1.setEnabled(true);
+            textArea1.append("\n\n======================STATISTICS SUMMARY======================\n" +
+                    "Count of Good WOs: " + goodRankings.size());
         } //process
 
         @Override
@@ -586,6 +595,8 @@ public class Main extends JFrame {
             }
 
             textArea1.setEnabled(true);
+            textArea1.append("\n\n======================STATISTICS SUMMARY======================\n" +
+                    "Count of Poor WOs: " + poorRankings.size());
         } //process
 
         @Override
@@ -599,6 +610,16 @@ public class Main extends JFrame {
      */
     private class FilterByAdditionalComments extends SwingWorker<Void, CombinedWorkOrder> {
         private ArrayList<CombinedWorkOrder> additionalComments = new ArrayList<>();
+
+        int numExcellent = 0;
+        int numGood = 0;
+        int numPoor = 0;
+        int numBlank = 0;
+        double percentExcellent;
+        double percentGood;
+        double percentPoor;
+        double percentBlank;
+
         public FilterByAdditionalComments() {
 
         } //FilterByAdditionalComments
@@ -610,9 +631,29 @@ public class Main extends JFrame {
 
                     if (!cWO.getAnswers().get(index).equals("No Response") && !cWO.getAnswers().get(index).equals("Na")) {
                         additionalComments.add(cWO);
+
+                        if (cWO.getQuestions().contains("Overall Performance Was:")) {
+                            int index1  = cWO.getQuestions().indexOf("Overall Performance Was:");
+
+                            if (cWO.getAnswers().get(index1).equals("Excellent")) {
+                                numExcellent++;
+                            } else if (cWO.getAnswers().get(index1).equals("Good")) {
+                                numGood++;
+                            } else if (cWO.getAnswers().get(index1).equals("Poor")) {
+                                numPoor++;
+                            } else if (cWO.getAnswers().get(index1).equals("No Response")) {
+                                numBlank++;
+                            }
+                        }
                     }
                 }
             }
+
+            //calculate basic statistics
+            percentExcellent = calculatePercentage(numExcellent, additionalComments.size());
+            percentGood = calculatePercentage(numGood, additionalComments.size());
+            percentPoor = calculatePercentage(numPoor, additionalComments.size());
+            percentBlank = calculatePercentage(numBlank, additionalComments.size());
 
             for (CombinedWorkOrder cWO : additionalComments) {
                 publish(cWO);
@@ -626,6 +667,12 @@ public class Main extends JFrame {
                 textArea1.append(cWO.toString() + "\n");
             }
             textArea1.setEnabled(true);
+            textArea1.append("\n\n======================STATISTICS SUMMARY======================\n" +
+                    "# of WOs: " + additionalComments.size() + "\n" +
+                    "Excellent: " + numExcellent + "(" + percentExcellent + "%)\n" +
+                    "Good: " + numGood + "(" + percentGood + "%)\n" +
+                    "Poor: " + numPoor + "(" + percentPoor + "%)\n" +
+                    "Blank/No Response: " + numBlank + "(" + percentBlank + "%)");
         } //process
 
         @Override
@@ -640,6 +687,16 @@ public class Main extends JFrame {
     private class FilterByTechAssigned extends SwingWorker<Void, CombinedWorkOrder> {
         private String tech;
         private ArrayList<CombinedWorkOrder> specificTech = new ArrayList<>();
+
+        int numExcellent = 0;
+        int numGood = 0;
+        int numPoor = 0;
+        int numBlank = 0;
+        double percentExcellent;
+        double percentGood;
+        double percentPoor;
+        double percentBlank;
+
         public FilterByTechAssigned(String tech) {
             this.tech = tech;
         } //FilterByTechAssigned
@@ -648,8 +705,28 @@ public class Main extends JFrame {
             for (CombinedWorkOrder cWO : combinedWorkOrders) {
                 if (cWO.getPrimaryTechnicianID().equals(tech)) {
                     specificTech.add(cWO);
+
+                    if (cWO.getQuestions().contains("Overall Performance Was:")) {
+                        int index  = cWO.getQuestions().indexOf("Overall Performance Was:");
+
+                        if (cWO.getAnswers().get(index).equals("Excellent")) {
+                            numExcellent++;
+                        } else if (cWO.getAnswers().get(index).equals("Good")) {
+                            numGood++;
+                        } else if (cWO.getAnswers().get(index).equals("Poor")) {
+                            numPoor++;
+                        } else if (cWO.getAnswers().get(index).equals("No Response")) {
+                            numBlank++;
+                        }
+                    }
                 }
             }
+
+            //calculate basic statistics
+            percentExcellent = calculatePercentage(numExcellent, specificTech.size());
+            percentGood = calculatePercentage(numGood, specificTech.size());
+            percentPoor = calculatePercentage(numPoor, specificTech.size());
+            percentBlank = calculatePercentage(numBlank, specificTech.size());
 
             for (CombinedWorkOrder cWO : specificTech) {
                 publish(cWO);
@@ -663,6 +740,12 @@ public class Main extends JFrame {
                 textArea1.append(cWO.toString() + "\n");
             }
             textArea1.setEnabled(true);
+            textArea1.append("\n\n======================STATISTICS SUMMARY======================\n" +
+                    "# of WOs for " + tech + ": " + specificTech.size() + "\n" +
+                    "Excellent: " + numExcellent + "(" + percentExcellent + "%)\n" +
+                    "Good: " + numGood + "(" + percentGood + "%)\n" +
+                    "Poor: " + numPoor + "(" + percentPoor + "%)\n" +
+                    "Blank/No Response: " + numBlank + "(" + percentBlank + "%)");
         } //process
 
         @Override
@@ -677,6 +760,16 @@ public class Main extends JFrame {
     private class FilterByWOType extends SwingWorker<Void, CombinedWorkOrder> {
         private String woType;
         private ArrayList<CombinedWorkOrder> specificType = new ArrayList<>();
+
+        int numExcellent = 0;
+        int numGood = 0;
+        int numPoor = 0;
+        int numBlank = 0;
+        double percentExcellent;
+        double percentGood;
+        double percentPoor;
+        double percentBlank;
+
         public FilterByWOType(String woType) {
             this.woType = woType;
         } //FilterByWOType
@@ -685,8 +778,28 @@ public class Main extends JFrame {
             for (CombinedWorkOrder cWO : combinedWorkOrders) {
                 if (cWO.getProgramType().equals(woType)) {
                     specificType.add(cWO);
+
+                    if (cWO.getQuestions().contains("Overall Performance Was:")) {
+                        int index  = cWO.getQuestions().indexOf("Overall Performance Was:");
+
+                        if (cWO.getAnswers().get(index).equals("Excellent")) {
+                            numExcellent++;
+                        } else if (cWO.getAnswers().get(index).equals("Good")) {
+                            numGood++;
+                        } else if (cWO.getAnswers().get(index).equals("Poor")) {
+                            numPoor++;
+                        } else if (cWO.getAnswers().get(index).equals("No Response")) {
+                            numBlank++;
+                        }
+                    }
                 }
             }
+
+            //calculate basic statistics
+            percentExcellent = calculatePercentage(numExcellent, specificType.size());
+            percentGood = calculatePercentage(numGood, specificType.size());
+            percentPoor = calculatePercentage(numPoor, specificType.size());
+            percentBlank = calculatePercentage(numBlank, specificType.size());
 
             for (CombinedWorkOrder cWO : specificType) {
                 publish(cWO);
@@ -700,6 +813,12 @@ public class Main extends JFrame {
                 textArea1.append(cWO.toString() + "\n");
             }
             textArea1.setEnabled(true);
+            textArea1.append("\n\n======================STATISTICS SUMMARY======================\n" +
+                    "# of WOs for " + woType + ": " + specificType.size() + "\n" +
+                    "Excellent: " + numExcellent + "(" + percentExcellent + "%)\n" +
+                    "Good: " + numGood + "(" + percentGood + "%)\n" +
+                    "Poor: " + numPoor + "(" + percentPoor + "%)\n" +
+                    "Blank/No Response: " + numBlank + "(" + percentBlank + "%)");
         } //process
 
         @Override
@@ -789,6 +908,8 @@ public class Main extends JFrame {
                 textArea1.append(cWO.toString() + "\n");
             }
             textArea1.setEnabled(true);
+            textArea1.append("\n\n=====================STATISTICS=====================\n" +
+                    "Number of WOs: " + poorAdditionalWOs.size());
         } //process
 
         @Override
