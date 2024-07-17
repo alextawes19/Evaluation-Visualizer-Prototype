@@ -96,7 +96,7 @@ public class Main extends JFrame {
                     new FilterByGoodRankings().execute();
                 } else if (comboFilter.getSelectedItem().equals("Filter by Poor Rankings")) {
                     new FilterByPoorRankings().execute();
-                } else if (comboFilter.getSelectedItem().equals("Filter by WOs with Additional Comments")) {
+                } else if (comboFilter.getSelectedItem().equals("Filter by All WOs with Additional Comments")) {
                     new FilterByAdditionalComments().execute();
                 } else if (comboFilter.getSelectedItem().equals("Filter by Tech Assigned")) {
                     new FilterByTechAssigned((String)comboTechs.getSelectedItem()).execute();
