@@ -15,4 +15,6 @@ Developed using Java and Swing.
 (Results painted over to ensure business' privacy)
 
 ## Filter Options (technician and WO type have second filters)
-![image](https://github.com/user-attachments/assets/6f6335d2-9226-46e0-a341-375e46eea7a9)
+![image](https://github.com/user-attachments/assets/ecbba152-7e9b-4d32-925b-65241cfed8b7)
+(Results painted over to ensure business' privacy)
+
