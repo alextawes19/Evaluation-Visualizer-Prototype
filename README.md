@@ -12,9 +12,11 @@ Developed using Java and Swing.
 
 ## Filtered by All Rankings
 ![image](https://github.com/user-attachments/assets/3b38db2e-d9ef-4d13-8d6c-9b3e035980a4)
+
 (Results painted over to ensure business' privacy)
 
 ## Filter Options (technician and WO type have second filters)
 ![image](https://github.com/user-attachments/assets/ecbba152-7e9b-4d32-925b-65241cfed8b7)
+
 (Results painted over to ensure business' privacy)
 
