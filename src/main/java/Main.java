@@ -18,9 +18,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
 
 public class Main extends JFrame {
@@ -59,6 +57,9 @@ public class Main extends JFrame {
         comboFilter.addItem("Filter by Poor Rated WOs with Additional Comments");
         comboFilter.addItem("Filter by Tech Assigned");
         comboFilter.addItem("Filter by WO Type");
+        comboFilter.addItem("Tech Performance Rankings");
+        comboFilter.addItem("Customer Performance Rankings");
+        comboFilter.addItem("District Performance Rankings");
         comboFilter.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -106,6 +107,12 @@ public class Main extends JFrame {
                     new FilterByExcellentWithAdditional().execute();
                 } else if (comboFilter.getSelectedItem().equals("Filter by Poor Rated WOs with Additional Comments")) {
                     new FilterByPoorWithAdditional().execute();
+                } else if (comboFilter.getSelectedItem().equals("Tech Performance Rankings")) {
+                    new FilterByTechRankings().execute();
+                } else if (comboFilter.getSelectedItem().equals("Customer Performance Rankings")) {
+                    new FilterByCustomerRankings().execute();
+                } else if (comboFilter.getSelectedItem().equals("District Performance Rankings")) {
+                    new FilterByDistrictRankings().execute();
                 } else {
                     JOptionPane.showMessageDialog(Main.this, "Error processing selections");
                 }
@@ -318,7 +325,6 @@ public class Main extends JFrame {
             } else {
                 comboTechs.addItem(techName);
             }
-
         }
     } //filterByTechs
 
@@ -917,5 +923,152 @@ public class Main extends JFrame {
             super.done();
         } //done
     } //FilterByPoorWithAdditional
+
+    /**
+     * Gives ranking of Excellent WO counts by technician
+     */
+    private class FilterByTechRankings extends SwingWorker<Void, Map.Entry<String, Integer>> {
+        HashMap<String, Integer> techMap = new HashMap<>();
+
+        public FilterByTechRankings() {
+
+        } //FilterByeExcellentRankings
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                if (cWO.getQuestions().contains("Overall Performance Was:")) {
+                    int index = cWO.getQuestions().indexOf("Overall Performance Was:");
+                    if (cWO.getAnswers().get(index).equals("Excellent")) {
+                        String tech = cWO.getPrimaryTechnicianID();
+                        techMap.put(tech, techMap.getOrDefault(tech, 0) + 1);
+                    }
+                }
+            }
+
+            for (HashMap.Entry<String, Integer> entry : techMap.entrySet()) {
+                publish(entry);
+            }
+            return null;
+        } //doInBackground
+
+        @Override
+        protected void process(List<Map.Entry<String, Integer>> chunks) {
+//            for (Map.Entry<String, Integer> entry : chunks) {
+//                textArea1.append("\nTechnician: " + entry.getKey() + "\nExcellent Ratings: " + entry.getValue() + "\n");
+//                textArea1.append("=================");
+//            }
+        } //process
+
+        @Override
+        protected void done() {
+            List<Map.Entry<String, Integer>> sortedTechs = new ArrayList<>(techMap.entrySet());
+            sortedTechs.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+            // Clear the text area before displaying the results
+            textArea1.setText("");
+
+            // Update the text area with the sorted results
+            for (Map.Entry<String, Integer> entry : sortedTechs) {
+                textArea1.append("========================\n");
+                textArea1.append("Technician:           " + entry.getKey() + "\nExcellent Ratings: " + entry.getValue() + "\n");
+            }
+        } //done
+    } //FilterByTechRankings
+
+    /**
+     * Gives ranking of Excellent WO counts by customer
+     */
+    private class FilterByCustomerRankings extends SwingWorker<Void, Map.Entry<String, Integer>> {
+        HashMap<String, Integer> customerMap = new HashMap<>();
+
+        public FilterByCustomerRankings() {
+
+        } //FilterByeExcellentRankings
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                if (cWO.getQuestions().contains("Overall Performance Was:")) {
+                    int index = cWO.getQuestions().indexOf("Overall Performance Was:");
+                    if (cWO.getAnswers().get(index).equals("Excellent")) {
+                        String customer = cWO.getCustomerName();
+                        customerMap.put(customer, customerMap.getOrDefault(customer, 0) + 1);
+                    }
+                }
+            }
+
+            for (HashMap.Entry<String, Integer> entry : customerMap.entrySet()) {
+                publish(entry);
+            }
+            return null;
+        } //doInBackground
+
+        @Override
+        protected void process(List<Map.Entry<String, Integer>> chunks) {
+
+        } //process
+
+        @Override
+        protected void done() {
+            List<Map.Entry<String, Integer>> sortedCustomers = new ArrayList<>(customerMap.entrySet());
+            sortedCustomers.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+            // Clear the text area before displaying the results
+            textArea1.setText("");
+
+            // Update the text area with the sorted results
+            for (Map.Entry<String, Integer> entry : sortedCustomers) {
+                textArea1.append("========================\n");
+                textArea1.append("Customer:             " + entry.getKey() + "\nExcellent Ratings: " + entry.getValue() + "\n");
+            }
+        } //done
+    } //FilterByCustomerRankings
+
+    /**
+     * Gives ranking of Excellent WO counts by district
+     */
+    private class FilterByDistrictRankings extends SwingWorker<Void, Map.Entry<String, Integer>> {
+        HashMap<String, Integer> districtMap = new HashMap<>();
+
+        public FilterByDistrictRankings() {
+
+        } //FilterByeExcellentRankings
+        @Override
+        protected Void doInBackground() throws Exception {
+            for (CombinedWorkOrder cWO : combinedWorkOrders) {
+                if (cWO.getQuestions().contains("Overall Performance Was:")) {
+                    int index = cWO.getQuestions().indexOf("Overall Performance Was:");
+                    if (cWO.getAnswers().get(index).equals("Excellent")) {
+                        String district = cWO.getDistrictName();
+                        districtMap.put(district, districtMap.getOrDefault(district, 0) + 1);
+                    }
+                }
+            }
+
+            for (HashMap.Entry<String, Integer> entry : districtMap.entrySet()) {
+                publish(entry);
+            }
+            return null;
+        } //doInBackground
+
+        @Override
+        protected void process(List<Map.Entry<String, Integer>> chunks) {
+
+        } //process
+
+        @Override
+        protected void done() {
+            List<Map.Entry<String, Integer>> sortedDistricts = new ArrayList<>(districtMap.entrySet());
+            sortedDistricts.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+            // Clear the text area before displaying the results
+            textArea1.setText("");
+
+            // Update the text area with the sorted results
+            for (Map.Entry<String, Integer> entry : sortedDistricts) {
+                textArea1.append("========================\n");
+                textArea1.append("District:                  " + entry.getKey() + "\nExcellent Ratings: " + entry.getValue() + "\n");
+            }
+        } //done
+    } //FilterByDistrictRankings
 
 } //Main
