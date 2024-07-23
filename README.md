@@ -18,5 +18,9 @@ Developed using Java and Swing.
 ## Filter Options (technician and WO type have second filters)
 ![image](https://github.com/user-attachments/assets/ecbba152-7e9b-4d32-925b-65241cfed8b7)
 
+## Rankings for Technicians, Customers, and Districts
+![image](https://github.com/user-attachments/assets/df1d3b1f-e211-4445-abbc-08d34aebcf7e)
+
+
 (Results painted over to ensure business' privacy)
 
