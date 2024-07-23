@@ -19,7 +19,8 @@ Developed using Java and Swing.
 ![image](https://github.com/user-attachments/assets/ecbba152-7e9b-4d32-925b-65241cfed8b7)
 
 ## Rankings for Technicians, Customers, and Districts
-![image](https://github.com/user-attachments/assets/df1d3b1f-e211-4445-abbc-08d34aebcf7e)
+![image](https://github.com/user-attachments/assets/667676b4-1216-4812-9218-271509d91547)
+
 
 
 (Results painted over to ensure business' privacy)
