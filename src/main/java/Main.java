@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
 
@@ -107,11 +108,11 @@ public class Main extends JFrame {
                 if (comboFilter.getSelectedItem().equals("Filter by All Rankings")) {
                     new FilterByAllRankings().execute();
                 } else if (comboFilter.getSelectedItem().equals("Filter by Excellent Rankings")) {
-                    new FilterByExcellentRankings().execute();
+                    new FilterByRankings("Excellent").execute();
                 } else if (comboFilter.getSelectedItem().equals("Filter by Good Rankings")) {
-                    new FilterByGoodRankings().execute();
+                    new FilterByRankings("Good").execute();
                 } else if (comboFilter.getSelectedItem().equals("Filter by Poor Rankings")) {
-                    new FilterByPoorRankings().execute();
+                    new FilterByRankings("Poor").execute();
                 } else if (comboFilter.getSelectedItem().equals("Filter by All WOs with Additional Comments")) {
                     new FilterByAdditionalComments().execute();
                 } else if (comboFilter.getSelectedItem().equals("Filter by Tech Assigned")) {
@@ -233,7 +234,7 @@ public class Main extends JFrame {
             HashSet<String> rawWOs = new HashSet<>();
 
             try {
-                FileReader fileReader = new FileReader(selectedFile);
+                FileReader fileReader = new FileReader(selectedFile, StandardCharsets.UTF_8);
                 CSVReader csvReader = new CSVReader(fileReader);
                 String[] nextRecord;
 
@@ -595,10 +596,15 @@ public class Main extends JFrame {
     } //FilterByAllRankings
 
     /**
-     * Filters WOs by excellent ratings
+     * Filters WOs by determined ratings
      */
-    private class FilterByExcellentRankings extends SwingWorker<Void, CombinedWorkOrder> {
-        private ArrayList<CombinedWorkOrder> excellentRatings = new ArrayList<>();
+    private class FilterByRankings extends SwingWorker<Void, CombinedWorkOrder> {
+        private ArrayList<CombinedWorkOrder> rankings = new ArrayList<>();
+        private String rank;
+
+        public FilterByRankings (String rank) {
+            this.rank = rank;
+        } //FilterByRankings
 
         @Override
         protected Void doInBackground() throws Exception {
@@ -606,13 +612,23 @@ public class Main extends JFrame {
                 if (cWO.getQuestions().contains("Overall Performance Was:")) {
                     int index = cWO.getQuestions().indexOf("Overall Performance Was:");
 
-                    if (cWO.getAnswers().get(index).equals("Excellent")) {
-                        excellentRatings.add(cWO);
+                    if (rank.equals("Excellent")) {
+                        if (cWO.getAnswers().get(index).equals("Excellent")) {
+                            rankings.add(cWO);
+                        }
+                    } else if (rank.equals("Good")) {
+                        if (cWO.getAnswers().get(index).equals("Good")) {
+                            rankings.add(cWO);
+                        }
+                    } else if (rank.equals("Poor")) {
+                        if (cWO.getAnswers().get(index).equals("Poor")) {
+                            rankings.add(cWO);
+                        }
                     }
                 }
             }
 
-            for (CombinedWorkOrder cWO : excellentRatings) {
+            for (CombinedWorkOrder cWO : rankings) {
                 publish(cWO);
             }
             return null;
@@ -625,95 +641,14 @@ public class Main extends JFrame {
             }
             textArea1.setEnabled(true);
             textArea1.append("\n\n======================STATISTICS SUMMARY======================\n" +
-                    "Count of Excellent WOs: " + excellentRatings.size());
+                    "Count of " + rank + " WOs: " + rankings.size());
         } //process
 
         @Override
         protected void done() {
             super.done();
         } //done
-    } //FilterByExcellentRankings
-
-    /**
-     * Filters WOs by good ratings
-     */
-    private class FilterByGoodRankings extends SwingWorker<Void, CombinedWorkOrder> {
-        private ArrayList<CombinedWorkOrder> goodRankings = new ArrayList<>();
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            for (CombinedWorkOrder cWO : combinedWorkOrders) {
-                if (cWO.getQuestions().contains("Overall Performance Was:")) {
-                    int index = cWO.getQuestions().indexOf("Overall Performance Was:");
-
-                    if (cWO.getAnswers().get(index).equals("Good")) {
-                        goodRankings.add(cWO);
-                    }
-                }
-            }
-
-            for (CombinedWorkOrder cWO : goodRankings) {
-                publish(cWO);
-            }
-            return null;
-        } //doInBackground
-
-        @Override
-        protected void process(List<CombinedWorkOrder> chunks) {
-            for (CombinedWorkOrder cWO: chunks) {
-                textArea1.append(cWO.toString() + "\n");
-            }
-            textArea1.setEnabled(true);
-            textArea1.append("\n\n======================STATISTICS SUMMARY======================\n" +
-                    "Count of Good WOs: " + goodRankings.size());
-        } //process
-
-        @Override
-        protected void done() {
-            super.done();
-        } //done
-    } //FilterByGoodRankings
-
-    /**
-     * Filters WOs by poor ratings
-     */
-    private class FilterByPoorRankings extends SwingWorker<Void, CombinedWorkOrder> {
-        private ArrayList<CombinedWorkOrder> poorRankings = new ArrayList<>();
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            for (CombinedWorkOrder cWO : combinedWorkOrders) {
-                if (cWO.getQuestions().contains("Overall Performance Was:")) {
-                    int index = cWO.getQuestions().indexOf("Overall Performance Was:");
-
-                    if (cWO.getAnswers().get(index).equals("Poor")) {
-                        poorRankings.add(cWO);
-                    }
-                }
-            }
-
-            for (CombinedWorkOrder cWO : poorRankings) {
-                publish(cWO);
-            }
-            return null;
-        } //doInBackground
-
-        @Override
-        protected void process(List<CombinedWorkOrder> chunks) {
-            for (CombinedWorkOrder cWO: chunks) {
-                textArea1.append(cWO.toString() + "\n");
-            }
-
-            textArea1.setEnabled(true);
-            textArea1.append("\n\n======================STATISTICS SUMMARY======================\n" +
-                    "Count of Poor WOs: " + poorRankings.size());
-        } //process
-
-        @Override
-        protected void done() {
-            super.done();
-        } //done
-    } //FilterByPoorRankings
+    } //FilterByRankings
 
     /**
      * Filters WOs by additional comments
@@ -1410,7 +1345,7 @@ public class Main extends JFrame {
             for (Map.Entry<String, Integer> entry : sortedDistricts) {
                 for (Map.Entry<String, Integer> ratio : ratioList) {
                     if (ratio.getKey().equals(entry.getKey())) {
-                        districtPercent = ((double) entry.getValue() /ratio.getValue()) * 100.00;
+                        districtPercent = ((double) entry.getValue() / ratio.getValue()) * 100.00;
                         averageRatio += districtPercent;
                     }
                 }
