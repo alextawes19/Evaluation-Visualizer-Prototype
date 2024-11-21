@@ -2,7 +2,7 @@
 
 ### Story
 When I was a project management intern at Rogers Electric, I noticed there was no easy way to look at work order evaluation form data especially at a large scale. I proposed this project and completed it within the summer by closely communicating and cooperating with several departments.
-
+========
 ### Summary
 Hundreds of thousands of work orders summarized in less than a second.
 
@@ -13,7 +13,7 @@ the project of switching the method of data storage.
 This application features many filters to allow the user to see necessary data and summaries. The application also exhibits the ability to export a report to PDF format.
 
 Developed using Java and Swing.
-
+========
 ## Initial App View
 ![image](https://github.com/user-attachments/assets/81e9a089-bde2-4f93-94e9-9690732c6ca7)
 
