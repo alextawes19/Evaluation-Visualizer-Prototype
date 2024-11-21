@@ -1,7 +1,10 @@
 # Evaluation Form Visualizer
-Hundreds of thousands of work orders summarized in less than a second.
 
+### Story
 When I was a project management intern at Rogers Electric, I noticed there was no easy way to look at work order evaluation form data especially at a large scale. I proposed this project and completed it within the summer by closely communicating and cooperating with several departments.
+
+### Summary
+Hundreds of thousands of work orders summarized in less than a second.
 
 This application analyzed customer evaluation forms that are completed after every work order. The data was stored in flat files, so file reading and data analysis techniques
 and strategies were implemented. This application brought to light data that was never previously looked at, and catalyzed the revision of the forms along with 
