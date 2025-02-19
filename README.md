@@ -14,6 +14,9 @@ This application features many filters to allow the user to see necessary data a
 
 Developed using Java and Swing.
 
+**Data Structures Implemented:** Hash sets, Hash maps, Maps (key-value pairs), lists, arrays
+**Algorithms:** custom-written algorithms for filtering
+
 ## Initial App View
 ![image](https://github.com/user-attachments/assets/81e9a089-bde2-4f93-94e9-9690732c6ca7)
 
